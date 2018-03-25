@@ -24,6 +24,7 @@ from tensorflow_probability.python.mcmc.hmc import HamiltonianMonteCarlo
 from tensorflow_probability.python.mcmc.hmc import UncalibratedHamiltonianMonteCarlo
 from tensorflow_probability.python.mcmc.kernel import TransitionKernel
 from tensorflow_probability.python.mcmc.metropolis_hastings import MetropolisHastings
+from tensorflow_probability.python.mcmc.replica_exchange_mc import ReplicaExchangeMC
 from tensorflow_probability.python.mcmc.sample import sample_chain
 from tensorflow_probability.python.mcmc.sample_annealed_importance import sample_annealed_importance_chain
 from tensorflow_probability.python.mcmc.sample_halton_sequence import sample_halton_sequence
@@ -33,6 +34,7 @@ from tensorflow.python.util.all_util import remove_undocumented
 _allowed_symbols = [
     'HamiltonianMonteCarlo',
     'MetropolisHastings',
+    'ReplicaExchangeMC',
     'TransitionKernel',
     'UncalibratedHamiltonianMonteCarlo',
     'effective_sample_size',
