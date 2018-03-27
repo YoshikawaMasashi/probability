@@ -24,6 +24,10 @@ from tensorflow_probability.python.mcmc.hmc import HamiltonianMonteCarlo
 from tensorflow_probability.python.mcmc.hmc import UncalibratedHamiltonianMonteCarlo
 from tensorflow_probability.python.mcmc.kernel import TransitionKernel
 from tensorflow_probability.python.mcmc.metropolis_hastings import MetropolisHastings
+from tensorflow_probability.python.mcmc.random_walk_metropolis import random_walk_normal_fn
+from tensorflow_probability.python.mcmc.random_walk_metropolis import random_walk_uniform_fn
+from tensorflow_probability.python.mcmc.random_walk_metropolis import RandomWalkMetropolis
+from tensorflow_probability.python.mcmc.random_walk_metropolis import UncalibratedRandomWalk
 from tensorflow_probability.python.mcmc.replica_exchange_mc import ReplicaExchangeMC
 from tensorflow_probability.python.mcmc.sample import sample_chain
 from tensorflow_probability.python.mcmc.sample_annealed_importance import sample_annealed_importance_chain
@@ -37,11 +41,15 @@ _allowed_symbols = [
     'ReplicaExchangeMC',
     'TransitionKernel',
     'UncalibratedHamiltonianMonteCarlo',
+    'RandomWalkMetropolis',
+    'UncalibratedRandomWalk',
     'effective_sample_size',
     'potential_scale_reduction',
     'sample_annealed_importance_chain',
     'sample_chain',
     'sample_halton_sequence',
+    'random_walk_normal_fn',
+    'random_walk_uniform_fn',
 ]
 
 remove_undocumented(__name__, _allowed_symbols)

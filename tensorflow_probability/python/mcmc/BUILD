@@ -34,6 +34,7 @@ py_library(
         ":hmc",
         ":kernel",
         ":metropolis_hastings",
+        ":random_walk_metropolis",
         ":replica_exchange_mc",
         ":sample",
         ":sample_annealed_importance",
@@ -124,6 +125,30 @@ py_test(
     name = "metropolis_hastings_test",
     size = "small",
     srcs = ["metropolis_hastings_test.py"],
+    deps = [
+        # numpy dep,
+        # tensorflow dep,
+        "//tensorflow_probability",
+    ],
+)
+
+py_library(
+    name = "random_walk_metropolis",
+    srcs = ["random_walk_metropolis.py"],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":kernel",
+        ":metropolis_hastings",
+        ":util",
+        # numpy dep,
+        # tensorflow dep,
+    ],
+)
+
+py_test(
+    name = "random_walk_metropolis_test",
+    size = "small",
+    srcs = ["random_walk_metropolis_test.py"],
     deps = [
         # numpy dep,
         # tensorflow dep,
