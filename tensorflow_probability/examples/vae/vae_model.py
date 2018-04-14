@@ -22,8 +22,9 @@ from __future__ import print_function
 import numpy as np
 
 import tensorflow as tf
+import tensorflow_probability as tfp
 
-tfd = tf.contrib.distributions
+tfd = tfp.distributions
 
 
 def make_encoder_net(images,
@@ -44,7 +45,7 @@ def make_encoder_net(images,
       indicating the number of units in each hidden layer. E.g., `[128, 32]`
       implies the network has two hidden layers with `128` and `32` outputs,
       respectively.
-    activation: The activation function as a Tensorflow op (e.g., tf.nn.elu).
+    activation: The activation function as a TensorFlow op (e.g., tf.nn.elu).
     name: An optional name scope for the network parameters.
 
   Returns:
@@ -100,7 +101,7 @@ def make_decoder_net(encoding_draw,
       indicating the number of units in each hidden layer. E.g., `[128, 32]`
       implies the network has two hidden layers with `128` and `32` outputs,
       respectively.
-    activation: The activation function as a Tensorflow op (e.g., tf.nn.elu).
+    activation: The activation function as a TensorFlow op (e.g., tf.nn.elu).
     name: An optional name scope for network parameters.
 
   Returns:
@@ -146,7 +147,7 @@ def make_prior_mvndiag(latent_size, dtype=tf.float32, name=None):
 
   Args:
     latent_size: The number of elements in the latent random variable.
-    dtype: The Tensorflow datatype of the latent code.
+    dtype: The TensorFlow datatype of the latent code.
     name: An optional name scope.
 
   Returns:
@@ -235,26 +236,28 @@ def make_vae(images,
   # Create the three components of a VAE: encoder, prior, and decoder
   with tf.variable_scope("encoder"):
     encoder = make_encoder(images)
-  encoding_draw = encoder.sample()
 
   with tf.variable_scope("prior"):
     prior = make_prior()
 
-  with tf.variable_scope("decoder"):
-    decoder = make_decoder(encoding_draw)
+  def joint_log_prob(z):
+    with tf.variable_scope("decoder"):
+      decoder = make_decoder(z)
+    return decoder.log_prob(images) + prior.log_prob(z)
 
-  # Combine terms from each component to form the (negative) ELBO
-  avg_logq = tf.reduce_mean(encoder.log_prob(encoding_draw))
-  avg_logp_z = tf.reduce_mean(prior.log_prob(encoding_draw))
-  avg_logp_x_given_z = tf.reduce_mean(decoder.log_prob(images))
-  elbo_loss = avg_logq - (avg_logp_z + avg_logp_x_given_z)
-
-  tf.summary.scalar("prior", avg_logp_z)
-  tf.summary.scalar("likelihood", avg_logp_x_given_z)
-  tf.summary.scalar("entropy", -avg_logq)
+  elbo_loss = tf.reduce_sum(
+      tfp.vi.csiszar_divergence.monte_carlo_csiszar_f_divergence(
+          f=tfp.vi.csiszar_divergence.kl_reverse,
+          p_log_prob=joint_log_prob,
+          q=encoder,
+          num_draws=1))
   tf.summary.scalar("elbo", elbo_loss)
 
   if return_full:
+    # Rebuild (and reuse!) the decoder so we can compute stats from it.
+    encoding_draw = encoder.sample()
+    with tf.variable_scope("decoder", reuse=True):
+      decoder = make_decoder(encoding_draw)
     return elbo_loss, encoder, decoder, prior, encoding_draw
 
   return elbo_loss

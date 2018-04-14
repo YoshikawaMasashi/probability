@@ -13,7 +13,7 @@
 # limitations under the License.
 # ============================================================================
 # Description:
-# Example implementation of a simple variational auto-encoder (VAE).
+# Examples of model uncertainty in predictive classifiers.
 
 licenses(["notice"])  # Apache 2.0
 
@@ -26,47 +26,79 @@ package(
 exports_files(["LICENSE"])
 
 py_library(
-    name = "vae_model",
+    name = "weight_uncertainty",
     srcs = [
-        "vae_model.py",
+        "weight_uncertainty.py",
     ],
     srcs_version = "PY2AND3",
     visibility = ["//visibility:public"],
     deps = [
         # numpy dep,
         # tensorflow dep,
-        "//tensorflow_probability",
     ],
 )
 
 py_binary(
-    name = "vae_main",
+    name = "logistic_regression",
     srcs = [
-        "main.py",
+        "logistic_regression.py",
     ],
-    main = "main.py",
     srcs_version = "PY2AND3",
     deps = [
-        ":vae_model",
+        ":weight_uncertainty",
         # matplotlib dep,
         # numpy dep,
+        # seaborn dep,
+        # tensorflow dep,
+    ],
+)
+
+py_binary(
+    name = "mnist_deep_nn",
+    srcs = [
+        "mnist_deep_nn.py",
+    ],
+    srcs_version = "PY2AND3",
+    deps = [
+        ":weight_uncertainty",
+        # matplotlib dep,
+        # numpy dep,
+        # seaborn dep,
         # tensorflow dep,
     ],
 )
 
 py_test(
-    name = "vae_test",
+    name = "logistic_regression_test",
     size = "small",
     srcs = [
-        "main.py",
+        "logistic_regression.py",
+    ],
+    args = [
+        "--num_examples=32",
+        "--batch_size=8",
+        "--max_steps=50",
+    ],
+    main = "logistic_regression.py",
+    srcs_version = "PY2AND3",
+    deps = [
+        ":logistic_regression",
+    ],
+)
+
+py_test(
+    name = "mnist_deep_nn_test",
+    size = "small",
+    srcs = [
+        "mnist_deep_nn.py",
     ],
     args = [
         "--fake_data",
         "--max_steps=5",
     ],
-    main = "main.py",
+    main = "mnist_deep_nn.py",
     srcs_version = "PY2AND3",
     deps = [
-        ":vae_main",
+        ":mnist_deep_nn",
     ],
 )

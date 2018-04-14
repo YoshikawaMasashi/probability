@@ -13,7 +13,9 @@
 # limitations under the License.
 # ============================================================================
 # Description:
-# Example implementation of a simple variational auto-encoder (VAE).
+#   TensorFlow Probability implements probabilistic and statistical
+#   methods, including modeling and Bayesian inference. APIs here are
+#   meant to evolve over time.
 
 licenses(["notice"])  # Apache 2.0
 
@@ -26,47 +28,13 @@ package(
 exports_files(["LICENSE"])
 
 py_library(
-    name = "vae_model",
-    srcs = [
-        "vae_model.py",
+    name = "examples",
+    srcs = ["__init__.py"],
+    data = [
+        "//tensorflow_probability/examples/vae:vae_main",
+        "//tensorflow_probability/examples/weight_uncertainty:logistic_regression",
+        "//tensorflow_probability/examples/weight_uncertainty:mnist_deep_nn",
     ],
     srcs_version = "PY2AND3",
-    visibility = ["//visibility:public"],
-    deps = [
-        # numpy dep,
-        # tensorflow dep,
-        "//tensorflow_probability",
-    ],
-)
-
-py_binary(
-    name = "vae_main",
-    srcs = [
-        "main.py",
-    ],
-    main = "main.py",
-    srcs_version = "PY2AND3",
-    deps = [
-        ":vae_model",
-        # matplotlib dep,
-        # numpy dep,
-        # tensorflow dep,
-    ],
-)
-
-py_test(
-    name = "vae_test",
-    size = "small",
-    srcs = [
-        "main.py",
-    ],
-    args = [
-        "--fake_data",
-        "--max_steps=5",
-    ],
-    main = "main.py",
-    srcs_version = "PY2AND3",
-    deps = [
-        ":vae_main",
-    ],
+    visibility = ["//tensorflow_probability:__pkg__"],
 )
